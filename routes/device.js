@@ -24,6 +24,16 @@ router.get('/', (req, res, next) => {
   // });
 });
 
+router.get('/:id', (req, res, next) => {
+  var myquery = { "_id": ObjectID(req.params.id) };
+  client.connect().then(async () => {
+      collection.find(myquery).toArray((err, result) => {
+          if (err) throw err;
+          res.status(200).send({ data: result });
+      });
+  })
+});
+
 router.put('/', (req, res, next) => {
   var newDevice = req.body.data;
   newDevice = { ...newDevice, created: new Date(), uid: generateId() }
