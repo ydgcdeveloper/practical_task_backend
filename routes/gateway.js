@@ -2,6 +2,7 @@ import { ObjectID } from 'bson';
 import express from 'express';
 import { v1 } from 'uuid';
 import client from "../data/db.js";
+import { isIPv4 } from 'is-ip';
 
 var router = express.Router();
 
@@ -37,6 +38,11 @@ router.get('/:id', (req, res, next) => {
 
 router.put('/', (req, res, next) => {
     var newGateway = req.body.data;
+    const { ipv4 } = req.body.data;
+    if(ipv4 && !isIPv4(ipv4)){
+        res.status(400).send('Wrong ipv4 parameter');
+        return;
+    }
     newGateway = { ...newGateway, usn: v1() }
     client.connect().then(async () => {
         collection.insertOne(newGateway, (err, result) => {
@@ -48,6 +54,11 @@ router.put('/', (req, res, next) => {
 
 router.patch('/', (req, res, next) => {
     var data = req.body.data;
+    const { ipv4 } = req.body.data;
+    if(ipv4 && !isIPv4(ipv4)){
+        res.status(400).send('Wrong ipv4 parameter');
+        return;
+    }
     var myquery = { "_id": ObjectID(data.query._id) };
     var newvalues = { $set: { ...data.set } };
     client.connect().then(async () => {
