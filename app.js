@@ -1,16 +1,18 @@
 import createError from 'http-errors';
 import express from 'express';
 import logger from 'morgan';
+import cors from 'cors';
 
 import deviceRouter from './routes/device.js';
 import gatewayRouter from './routes/gateway.js';
 
 var app = express();
 
-const port = 5000
+const port = process.env.PORT || 5000
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
@@ -18,7 +20,6 @@ app.use('/device', deviceRouter);
 app.use('/gateway', gatewayRouter);
 
 app.get('/', (req, res) => {
-    console.log("Body",req.body);
     res.send('API for Gateways Practical Task')
 })
 
